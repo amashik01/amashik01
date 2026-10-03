@@ -59,7 +59,9 @@ def main(period, limit, headless=True):
                         m["_kw"] = kw; m["_period"] = period; seen[mid] = m; new += 1
                     else:
                         seen[mid].setdefault("_kws", []).append(kw)
-            print(f"{kw!r}: total_count={total} new={new} all={len(seen)}")
+            print(f"{kw!r}: total_count={total} new={new} all={len(seen)}", flush=True)
+            with open(OUT, "w", encoding="utf-8") as f:
+                for m in seen.values(): f.write(json.dumps(m, ensure_ascii=False) + "\n")
         b.close()
     with open(OUT, "w", encoding="utf-8") as f:
         for m in seen.values(): f.write(json.dumps(m, ensure_ascii=False) + "\n")

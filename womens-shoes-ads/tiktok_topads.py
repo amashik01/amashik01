@@ -40,8 +40,8 @@ def main(period, limit, headless=True):
         for kw in kws:
             bucket.clear()
             try:
-                inp = pg.query_selector("input[placeholder*='earch' i][type=text]") or pg.query_selector("input[placeholder*='earch' i]")
-                inp.click(force=True, timeout=5000); inp.fill(""); inp.fill(kw)
+                inp = next(i for i in pg.query_selector_all("input[placeholder*='earch' i]") if i.is_visible())
+                inp.click(force=True, timeout=5000); inp.fill(kw, timeout=8000)
                 pg.keyboard.press("Enter"); pg.wait_for_timeout(5000)
                 for _ in range(15):          # "View more" pagination
                     if not bucket or not bucket[-1]["pagination"].get("has_more"): break

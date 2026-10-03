@@ -28,7 +28,8 @@ def parse(text, kw):
         seg = text[m.end():end]
         seg = re.sub(r"\n(Active|Inactive)\s*$", "", seg.rstrip())          # next ad's status line
         start = re.search(r"Started running on ([A-Za-z]+ \d+, \d{4})", seg)
-        after = seg.split("See ad details", 1)[-1] if "See ad details" in seg else seg
+        mm = re.search(r"See (?:ad|summary) details", seg)
+        after = seg[mm.end():] if mm else seg
         lines = [l.strip() for l in after.split("\n") if l.strip() and l.strip() != "​"]
         page = lines[0] if lines else ""
         copy_lines, dom, ig = [], "", ""
@@ -39,7 +40,7 @@ def parse(text, kw):
         multi = bool(re.search(r"multiple versions|This ad has \d+ versions", seg, re.I))
         out.append({"ad_id": m.group(1), "ad_url": f"https://www.facebook.com/ads/library/?id={m.group(1)}",
                     "start": start.group(1) if start else "", "page": page, "instagram_handle": ig,
-                    "copy": "\n".join(copy_lines)[:1500], "multi_version": multi, "keyword": kw})
+                    "copy": "\n".join(copy_lines)[:1500], "multi_version": multi, "keyword": kw, "raw": seg[:400]})
     return out
 
 
